@@ -47,12 +47,10 @@ app.use(router.routes())
 app.use(router.allowedMethods())
 
 await cacheHandler()
-if (Deno.env.get("CACHE_SIZE_LIMITING") == "true"){
+if ((Deno.env.get("CACHE_SIZE_LIMITING") == "true") ?? false){
     cacheSizeController()
 }
 
-const port = Number(Deno.env.get("PORT"))
+const port = Number(Deno.env.get("PORT")) ?? 8000
 app.listen({ port })
 console.log(`Server is listening on port: ${port}`)
-
-// Test URL - http://localhost:8000/convert/?pdf=https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf&page=first

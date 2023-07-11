@@ -57,9 +57,3 @@ export const convertPDFtoJPGOakRoute = async (context:Context) => {
     context.response.body = file
 
 }
-
-
-// TODO at the end of each request after serving we have to check the size of the cache folder and remove (longest not read) file if it exceeds given amount.
-// deno last accessed?
-// Or create cron task.
-// * * * 3/2 * deno run /adadas/index.ts --flush

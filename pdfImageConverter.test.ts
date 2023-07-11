@@ -9,7 +9,7 @@ function unwantedError() {
 
 Deno.test("input validation with good input", () => {
     const input = new URLSearchParams()
-    const testPdf = 'https://media.mediaworks.global/files/bible-stories-from-the-bible-in-nivkh-and-russian.niv.pdf'
+    const testPdf = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
     const testPage =  '81'
 
     input.set('pdf', testPdf)
@@ -23,7 +23,7 @@ Deno.test("input validation with good input", () => {
 
 Deno.test("input validation with bad input", () => {
     const input = new URLSearchParams()
-    const testPdf = 'media.mediaworks.global/files/bible-stories-from-the-bible-in-nivkh-and-russian.niv.pdf'
+    const testPdf = 'www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
     const testPage = 'center'
 
     input.set('pdf', testPdf)
@@ -55,7 +55,7 @@ Deno.test("request for invalid pdf link", async () => {
     }
 
     try {
-        await convertPDFtoJPG(`https://media.mediaworks.tories-from-the-bible-inand-russian.niv.pdf`, "first")
+        await convertPDFtoJPG(`https://www.w3.org/WAI/ER/estfiles/resources/pdf/dummy.pdf`, "first")
     }
     catch (error) {
         if (String(error).search("Error reading PDF info, PDF file may not be present at this URL")) {
@@ -69,7 +69,7 @@ Deno.test("request for invalid pdf link", async () => {
 
 Deno.test("request for page outside of range", async () => {
     try {
-        await convertPDFtoJPG(`https://media.mediaworks.global/files/bible-stories-from-the-bible-in-nivkh-and-russian.niv.pdf`, "1000")
+        await convertPDFtoJPG(`https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`, "1000")
     }
     catch (error) {
         if (String(error).search("Page outside of valid range")) {

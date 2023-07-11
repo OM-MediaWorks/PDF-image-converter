@@ -42,7 +42,7 @@ export function cacheSizeController() {
   }
 
   async function limitCache(){
-    const cacheLimit = Number(Deno.env.get("CACHE_SIZE"))  
+    const cacheLimit = Number(Deno.env.get("CACHE_SIZE")) ?? 100000000
     console.log(cacheLimit) 
     const { returnCacheSize } = await checkCacheSize()
     let cacheSize = returnCacheSize

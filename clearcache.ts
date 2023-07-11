@@ -1,6 +1,1 @@
-const clearCache = new Deno.Command("rm", {
-    args: [
-        "-r", "cache"
-    ]
-})
-clearCache.output()
+Deno.remove("./cache", { recursive: true })

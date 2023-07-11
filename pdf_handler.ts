@@ -5,12 +5,7 @@ export async function fetchPDF(pdfLocation:string, hashName:string) {
 }
 
 export async function removeTemp(hashName:string) {
-    const removeTempPDF = new Deno.Command("rm", {
-        args: [
-          `${hashName}.pdf`
-        ]
-    })
-    await removeTempPDF.output()
+    await Deno.remove(`${hashName}.pdf`)
 }
 
 export async function getPDFLength(hashName:string, pageInfoOffset = 16) {
@@ -21,8 +16,14 @@ export async function getPDFLength(hashName:string, pageInfoOffset = 16) {
     })
     const{stdout, stderr} = await getPDFInfo.output()
     if (stderr[0] != undefined){
-        await(removeTemp(hashName))
-        throw new Error("Error reading PDF info")
+        if ((new TextDecoder().decode(stderr)).search("May not be a PDF file")) {
+            await(removeTemp(hashName))
+            throw new Error("Error reading PDF info, PDF file may not be present at this URL")
+        }
+        else {
+            await(removeTemp(hashName))
+            throw new Error("Error reading PDF info")
+        }
     }
     const infoDecode = new TextDecoder().decode(stdout)
     const pageNumFinder = infoDecode.indexOf("Pages:")

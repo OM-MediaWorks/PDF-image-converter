@@ -1,5 +1,20 @@
+export function firstToNum(keyword:string) {
+    keyword = keyword.toLowerCase()
+    if (keyword == "first"){
+        return 1
+    }
+    else {
+        const pageNum = Number(keyword)
+        if (isNaN(pageNum) == false){
+            return pageNum
+        }
+        else {
+            return false
+        }
+    }
+}
+
 export function keywordToPageNum(keyword:string, pdfLength:number) {
-    console.log(keyword, pdfLength)
     let pageNum:number
     keyword = keyword.toLowerCase()
     if (keyword == "middle"){
@@ -14,22 +29,5 @@ export function keywordToPageNum(keyword:string, pdfLength:number) {
 
     else {
         return false
-    }
-}
-
-export function firstToNum(keyword:string) {
-    console.log(keyword)
-    keyword = keyword.toLowerCase()
-    if (keyword == "first"){
-        return 1
-    }
-    else {
-        const pageNum = Number(keyword)
-        if (isNaN(pageNum) == false){
-            return pageNum
-        }
-        else {
-            return false
-        }
     }
 }

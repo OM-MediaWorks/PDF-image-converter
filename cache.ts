@@ -1,4 +1,4 @@
-import {weekly} from "https://deno.land/x/deno_cron@v1.0.0/cron.ts"
+import { cron } from "https://deno.land/x/deno_cron@v1.0.0/cron.ts"
 
 export async function cacheHandler() {
   try {
@@ -43,7 +43,6 @@ export function cacheSizeController() {
 
   async function limitCache(){
     const cacheLimit = Number(Deno.env.get("CACHE_SIZE")) ?? 100000000
-    console.log(cacheLimit) 
     const { returnCacheSize } = await checkCacheSize()
     let cacheSize = returnCacheSize
     
@@ -64,7 +63,9 @@ export function cacheSizeController() {
     console.log("Cache cleanup complete!")
   }
 
-  weekly(() => {
+  const cronEnv = Deno.env.get("CRON_TIMING") ?? "*,*,*,*,*"
+  let cronTiming = cronEnv.replaceAll(',', ' ')
+  cron(cronTiming, () => {
     limitCache()
   })
 }

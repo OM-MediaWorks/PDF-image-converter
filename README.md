@@ -23,7 +23,7 @@ Cache limiting is disabled by default
 
 #### Deno
 
-Deno users should import from "https://deno.land/x/pdf_to_jpg@v0.9.1/pdfImageConverter.ts"
+Deno users should import from "https://deno.land/x/pdf_to_jpg/pdfImageConverter.ts"
 For standalone use of the converter, import "convertPDFtoJPG"
 For integrated use with Oak, import "convertPDFtoJPGOakRoute"
 

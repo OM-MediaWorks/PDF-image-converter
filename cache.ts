@@ -64,7 +64,7 @@ export function cacheSizeController() {
   }
 
   const cronEnv = Deno.env.get("CRON_TIMING") ?? "*,*,*,*,*"
-  let cronTiming = cronEnv.replaceAll(',', ' ')
+  const cronTiming = cronEnv.replaceAll(',', ' ')
   cron(cronTiming, () => {
     limitCache()
   })

@@ -1,56 +1,59 @@
-import { Application, Context, Router } from "https://deno.land/x/oak@v12.5.0/mod.ts"
-import { convertPDFtoJPGOakRoute } from './pdfImageConverter.ts'
-import { cacheHandler, cacheSizeController } from "./cache.ts"
-import { ZodError } from "https://deno.land/x/zod@v3.21.4/mod.ts"
-import "https://deno.land/std@0.193.0/dotenv/load.ts"
+import { Context } from "https://deno.land/x/oak@v12.5.0/mod.ts"
+import * as inputValidation from "./inputValidation.ts"
+import * as cache from "./cache.ts"
+import * as hash from "./hash.ts"
+import * as keyword from "./keyword.ts"
+import * as pdf_handler from "./pdf_handler.ts"
+import * as pdf_to_jpg from "./pdf_to_jpg.ts"
 
-const app = new Application()
+export async function pdfImageConverter(pdfLocation: string, pageToConvert: string){
+    const pdfHash = hash.createHash(pdfLocation)
+    
+    const value_firstToNum = keyword.firstToNum(pageToConvert)
 
-const usage = {
-    description: `A tool to convert a page of a PDF to an image.`,
-    requiredArguments: {
-        pdf: 'A url to the pdf',
-        page: 'Must be a number or it could be one of these keywords: first, middle, last'
+    let pageNum = -1
+    if (value_firstToNum !== false) {
+        pageNum = value_firstToNum
+    }
+
+    const value_checkCache = await cache.checkCache(pdfHash, pageToConvert)
+    if (value_checkCache !== false){
+        return value_checkCache
+    }
+
+    await pdf_handler.fetchPDF(pdfLocation, pdfHash)
+
+    const pdfLength = await pdf_handler.getPDFLength(pdfHash)
+    
+    const value_keywordToPageNum = keyword.keywordToPageNum(pageToConvert, pdfLength)
+    if (value_keywordToPageNum !== false) {
+        pageNum = value_keywordToPageNum
+    }
+
+    if (pageNum > 0 && pageNum <= pdfLength){
+        await pdf_to_jpg.pdfToJPG(String(pageNum), pdfHash, pageToConvert, String(pdfLength))
+        await pdf_handler.removeTemp(pdfHash)
+    }
+
+    else {
+        await pdf_handler.removeTemp(pdfHash)
+        throw new Error("Page outside of valid range")
+    }
+
+    const value_checkCache2 = await cache.checkCache(pdfHash, pageToConvert)
+    if (value_checkCache2 !== false) {
+        return value_checkCache2
+    }
+    else {
+        throw new Error("Conversion unsuccessful")
     }
 }
 
-app.use(async (context, next) => {
-    try {
-      await next();
-    } catch (error) {
-        context.response.type = "json";
+export const pdfImageConverterOakRoute = async (context:Context) => {
+    const {searchParams} = context.request.url
+    const {pdf, page} = inputValidation.validateInput(searchParams)
+    const file = await pdfImageConverter(pdf, page.toString())
+    context.response.headers.set('Content-Type', 'image/jpg');
+    context.response.body = file
 
-        let message =  String(error)
-
-        if (error instanceof ZodError) {
-            const jsonBody = JSON.parse(error.message)
-            message = jsonBody?.[0]?.message ?? ''
-
-            if (jsonBody?.[0]?.unionErrors) {
-                message = jsonBody?.[0]?.unionErrors.map((error: any) => error?.issues[0].message)
-            }
-        }
-
-        context.response.body = { usage, error: message };
-    }
-
-  });
-
-const router = new Router()
-router
-    .get("/", (context: Context) => {
-        context.response.body = usage
-    })
-    .get("/convert", convertPDFtoJPGOakRoute)
-
-app.use(router.routes())
-app.use(router.allowedMethods())
-
-await cacheHandler()
-if ((Deno.env.get("CACHE_SIZE_LIMITING") == "true") ?? false){
-    cacheSizeController()
 }
-
-const port = Number(Deno.env.get("PORT")) ?? 8000
-app.listen({ port })
-console.log(`Server is listening on port: ${port}`)

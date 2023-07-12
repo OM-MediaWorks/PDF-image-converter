@@ -1,7 +1,7 @@
 import { ZodError } from 'https://deno.land/x/zod@v3.21.4/ZodError.ts';
 import { validateInput } from './inputValidation.ts'
 import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
-import { convertPDFtoJPG } from './pdfImageConverter.ts';
+import { pdfImageConverter } from './index.ts';
 
 function unwantedError() {
     throw new Error("Unwanted error")
@@ -43,7 +43,7 @@ Deno.test("input validation with bad input", () => {
 
 Deno.test("request for invalid pdf link", async () => {
     try {
-        await convertPDFtoJPG(`https://www.pdf`, "first")
+        await pdfImageConverter(`https://www.pdf`, "first")
     }
     catch (error) {
         if (String(error).search("error sending request for url")) {
@@ -55,7 +55,7 @@ Deno.test("request for invalid pdf link", async () => {
     }
 
     try {
-        await convertPDFtoJPG(`https://www.w3.org/WAI/ER/estfiles/resources/pdf/dummy.pdf`, "first")
+        await pdfImageConverter(`https://www.w3.org/WAI/ER/estfiles/resources/pdf/dummy.pdf`, "first")
     }
     catch (error) {
         if (String(error).search("Error reading PDF info, PDF file may not be present at this URL")) {
@@ -69,7 +69,7 @@ Deno.test("request for invalid pdf link", async () => {
 
 Deno.test("request for page outside of range", async () => {
     try {
-        await convertPDFtoJPG(`https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`, "1000")
+        await pdfImageConverter(`https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`, "1000")
     }
     catch (error) {
         if (String(error).search("Page outside of valid range")) {
@@ -83,7 +83,7 @@ Deno.test("request for page outside of range", async () => {
 
 Deno.test("invalid pdf file", async () => {
     try {
-        await convertPDFtoJPG(`https://github.com/ArturT/Test-PDF-Files/blob/master/corrupted.pdf`, "first")
+        await pdfImageConverter(`https://github.com/ArturT/Test-PDF-Files/blob/master/corrupted.pdf`, "first")
     }
     catch (error) {
         if (String(error).search("Error reading PDF info")) {

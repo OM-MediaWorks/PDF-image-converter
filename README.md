@@ -36,6 +36,6 @@ Run index.ts to start the converter which will then begin an Oak server on the c
 
 To convert a page of a PDF document to JPG, a PDF URL and either the page number or one of the keywords ("first", "middle" and "end")
 
-Syntax: http://localhost:{port}/convert/?pdf={pdf url}&{page number or keyword}
+Syntax: http:// localhost:{port}/convert/?pdf={pdf url}&{page number or keyword}
 
 Example URL: http://localhost:8000/convert/?pdf=https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf&page=first

@@ -18,11 +18,13 @@ app.use(async (context, next) => {
     try {
       await next();
     } catch (error) {
-        context.response.type = "json";
+        context.response.type = "json"
+        context.response.status = 500
 
         let message =  String(error)
 
         if (error instanceof ZodError) {
+            context.response.status = 400
             const jsonBody = JSON.parse(error.message)
             message = jsonBody?.[0]?.message ?? ''
 

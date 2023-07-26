@@ -1,8 +1,8 @@
-export async function pdfToJPG(pageNum:string, fileName:string, pageToConvert:string, totalPages:string){
+export async function pdfToJPG(pageNum:string, fileName:string, antiOverlapNum:number, pageToConvert:string, totalPages:string){
   const cacheName = `./cache/${fileName}`
   const convertCommand = new Deno.Command("pdftoppm", {
     args: [
-      '-jpeg', `${fileName}.pdf`, '-f', pageNum,'-l', pageNum, cacheName
+      '-jpeg', `${fileName+antiOverlapNum}.pdf`, '-f', pageNum,'-l', pageNum, cacheName
     ]
   })
   await convertCommand.output()

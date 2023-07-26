@@ -7,6 +7,7 @@ import * as pdf_handler from "./pdf_handler.ts"
 import * as pdf_to_jpg from "./pdf_to_jpg.ts"
 
 export async function pdfImageConverter(pdfLocation: string, pageToConvert: string){
+    const antiOverlapNum = Math.random()
     const pdfHash = hash.createHash(pdfLocation)
     
     const value_firstToNum = keyword.firstToNum(pageToConvert)
@@ -21,9 +22,9 @@ export async function pdfImageConverter(pdfLocation: string, pageToConvert: stri
         return value_checkCache
     }
 
-    await pdf_handler.fetchPDF(pdfLocation, pdfHash)
+    await pdf_handler.fetchPDF(pdfLocation, antiOverlapNum, pdfHash)
 
-    const pdfLength = await pdf_handler.getPDFLength(pdfHash)
+    const pdfLength = await pdf_handler.getPDFLength(pdfHash, antiOverlapNum)
     
     const value_keywordToPageNum = keyword.keywordToPageNum(pageToConvert, pdfLength)
     if (value_keywordToPageNum !== false) {
@@ -31,12 +32,12 @@ export async function pdfImageConverter(pdfLocation: string, pageToConvert: stri
     }
 
     if (pageNum > 0 && pageNum <= pdfLength){
-        await pdf_to_jpg.pdfToJPG(String(pageNum), pdfHash, pageToConvert, String(pdfLength))
-        await pdf_handler.removeTemp(pdfHash)
+        await pdf_to_jpg.pdfToJPG(String(pageNum), pdfHash, antiOverlapNum, pageToConvert, String(pdfLength))
+        await pdf_handler.removeTemp(pdfHash, antiOverlapNum)
     }
 
     else {
-        await pdf_handler.removeTemp(pdfHash)
+        await pdf_handler.removeTemp(pdfHash, antiOverlapNum)
         throw new Error("Page outside of valid range")
     }
 

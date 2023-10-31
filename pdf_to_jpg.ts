@@ -9,4 +9,12 @@ export async function pdfToJPG(pageNum:string, fileName:string, antiOverlapNum:n
 
   const padValue = totalPages.length
   await Deno.rename(`${cacheName}-${pageNum.padStart(padValue, "0")}.jpg`, `${cacheName}-${pageToConvert}.jpg`)
+
+  const exifCommand = new Deno.Command("exiftool", {
+    args: [
+      '-overwrite_original', `-PageNumber=${pageNum} ${totalPages}`, `${cacheName}-${pageToConvert}.jpg`
+    ]
+  })
+
+  await exifCommand.output()
 }

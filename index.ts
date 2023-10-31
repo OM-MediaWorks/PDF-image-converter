@@ -55,6 +55,6 @@ export const pdfImageConverterOakRoute = async (context:Context) => {
     const {pdf, page} = inputValidation.validateInput(searchParams)
     const file = await pdfImageConverter(pdf, page.toString())
     context.response.headers.set('Content-Type', 'image/jpg');
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
     context.response.body = file
-
 }

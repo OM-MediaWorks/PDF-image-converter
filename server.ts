@@ -53,6 +53,6 @@ if ((Deno.env.get("CACHE_SIZE_LIMITING") == "true") ?? false){
     cacheSizeController()
 }
 
-const port = Number(Deno.env.get("PORT")) ?? 8000
+const port = Number(Deno.env.get("PORT") ?? 8000)
 app.listen({ port })
 console.log(`Server is listening on port: ${port}`)
